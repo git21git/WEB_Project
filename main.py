@@ -5,13 +5,38 @@ app = Flask(__name__)
 
 @app.route('/')
 def page():
-    return 'web проект'
+    return r"""<!doctype html>
+        <html lang="en">
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <link rel="stylesheet"
+                  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+                  integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+                  crossorigin="anonymous">
+            <title>Проект</title>
+            </head>
+                <body>
+                <h1>Доступные страницы:</h1>
+                <div class="alert alert-dark" role="alert">
+                    \promotion
+                </div>
+                <div class="alert alert-success" role="alert">
+                    \authors
+                </div>
+                </body>
+                </html>"""
 
 
 @app.route('/<title>')
 @app.route('/index/<title>')
 def index(title):
     return render_template('base.html', title=title)
+
+
+@app.route('/authors')
+def authors():
+    return 'Страница с информацией об авторах'
 
 
 @app.route('/promotion')
