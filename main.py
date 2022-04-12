@@ -135,15 +135,19 @@ def image_mars(type_map, city):
     if not response:
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
-        return f"""<h1>Мы не нашли город "{city}", Он существует?<h1>"""
+        return f"""<title>Привет, {city.capitalize()}!</title>
+                    <h1>Мы не нашли город "{city.capitalize()}", Он существует?<h1>
+                    <img src="{url_for('static', filename='pg_files/Paris.png')}" 
+                                           alt="здесь должна была быть картинка, но не нашлась">
+                                    <h4>Вот Вам Париж вместо "{city.capitalize()}"</h4>"""
     else:  # Запишем полученное изображение в файл.
         map_file = "static/pg_files/map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
-        return f'''<title>Привет, {city}!</title>
+        return f'''<title>Привет, {city.capitalize()}!</title>
                 <img src="{url_for('static', filename='pg_files/map.png')}" 
                        alt="здесь должна была быть картинка, но не нашлась">
-                <h4>{city}</h4>'''
+                <h4>{city.capitalize()}</h4>'''
 
 
 if __name__ == '__main__':
