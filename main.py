@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, url_for
+import requests
 from data import db_session
 from data.posts import Posts
 from data.users import User
@@ -135,6 +136,54 @@ def promotion_image():
                 </div>
                 </body>
                 </html>"""
+
+
+API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
+
+
+def coords(city):
+    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={city}&format=json"
+    response = requests.get(geocoder_request)
+    if response:
+        json_response = response.json()
+
+        if json_response["response"]["GeoObjectCollection"]["featureMember"]:
+            toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+            toponym_coodrinates = toponym["Point"]["pos"]
+            return toponym_coodrinates.replace(' ', ',')
+    else:
+        print("Ошибка выполнения запроса:")
+        print(geocoder_request)
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        return False
+
+
+@app.route('/ground/<type_map>/<city>')
+def image_mars(type_map, city):
+    api_server = "http://static-maps.yandex.ru/1.x/"
+    params = {
+        "ll": coords(city),
+        "spn": '0.1,0.1',
+        "l": type_map
+    }
+    response = requests.get(api_server, params=params)
+    print(params)
+    if not response:
+        print("Ошибка выполнения запроса:")
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        return f"""<title>Привет, {city.capitalize()}!</title>
+                    <h1>Мы не нашли город "{city.capitalize()}", Он существует?<h1>
+                    <img src="{url_for('static', filename='pg_files/Paris.png')}" 
+                                           alt="здесь должна была быть картинка, но не нашлась">
+                                    <h4>Вот Вам Париж вместо "{city.capitalize()}"</h4>"""
+    else:  # Запишем полученное изображение в файл.
+        map_file = "static/pg_files/map.png"
+        with open(map_file, "wb") as file:
+            file.write(response.content)
+        return f'''<title>Привет, {city.capitalize()}!</title>
+                <img src="{url_for('static', filename='pg_files/map.png')}" 
+                       alt="здесь должна была быть картинка, но не нашлась">
+                <h4>{city.capitalize()}</h4>'''
 
 
 if __name__ == '__main__':
