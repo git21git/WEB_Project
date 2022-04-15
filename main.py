@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, abort
 import requests
 from data import db_session
 from data.posts import Posts
@@ -6,6 +6,7 @@ from data.users import User
 from forms.user import RegisterForm, LoginForm
 import os
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from forms.posts import PostsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -185,6 +186,58 @@ def image_mars(type_map, city):
                 <img src="{url_for('static', filename='pg_files/map.png')}" 
                        alt="здесь должна была быть картинка, но не нашлась">
                 <h4>{city.capitalize()}</h4>'''
+
+
+@app.route('/posts', methods=['GET', 'POST'])
+@login_required
+def add_posts():
+    form = PostsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        posts = Posts()  # Спорный момент
+        posts.title = form.title.data
+        posts.content = form.content.data
+        posts.is_private = form.is_private.data
+        current_user.posts.append(posts)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('posts.html', title='Добавление новости',
+                           form=form)
+
+
+@app.route('/news/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_news(id):
+    form = PostsForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        news = db_sess.query(Posts).filter(Posts.id == id,
+                                           Posts.user == current_user
+                                           ).first()
+        if news:
+            form.title.data = news.title
+            form.content.data = news.content
+            form.is_private.data = news.is_private
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        news = db_sess.query(Posts).filter(Posts.id == id,
+                                           Posts.user == current_user
+                                           ).first()
+        if news:
+            news.title = form.title.data
+            news.content = form.content.data
+            news.is_private = form.is_private.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('news.html',
+                           title='Редактирование новости',
+                           form=form
+                           )
 
 
 # @app.route('/lk') # Личный кабинет

@@ -21,7 +21,10 @@ body {
   transition: .3s;
 }
 
-
+.text_for_name {
+ font-family: 'Montserrat', sans-serif;
+ letter-spacing: 3px;
+}
 
 .floating-button:hover {
   background: #95c5e6;
