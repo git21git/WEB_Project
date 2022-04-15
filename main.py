@@ -187,6 +187,10 @@ def image_mars(type_map, city):
                 <h4>{city.capitalize()}</h4>'''
 
 
+# @app.route('/lk') # Личный кабинет
+# def lk():
+
+
 if __name__ == '__main__':
     db_session.global_init("db/posts.db")
     port = int(os.environ.get("PORT", 5000))
