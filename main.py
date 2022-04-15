@@ -4,6 +4,7 @@ from data import db_session
 from data.posts import Posts
 from data.users import User
 from forms.user import RegisterForm, LoginForm
+import os
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
@@ -176,8 +177,8 @@ def image_mars(type_map, city):
                     <img src="{url_for('static', filename='pg_files/Paris.png')}" 
                                            alt="здесь должна была быть картинка, но не нашлась">
                                     <h4>Вот Вам Париж вместо "{city.capitalize()}"</h4>"""
-    else:  # Запишем полученное изображение в файл.
-        map_file = "static/pg_files/map.png"
+    else:
+        map_file = "static/pg_files/map.png"  # Запишем полученное изображение в файл.
         with open(map_file, "wb") as file:
             file.write(response.content)
         return f'''<title>Привет, {city.capitalize()}!</title>
@@ -188,4 +189,5 @@ def image_mars(type_map, city):
 
 if __name__ == '__main__':
     db_session.global_init("db/posts.db")
-    app.run(port=8080, host='127.0.0.1')
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
