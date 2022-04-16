@@ -19,14 +19,14 @@ login_manager.init_app(app)
 
 @app.route('/')
 def main_page():
-    """render_template('main_page.html')?"""
-    return render_template('base.html')
+    """Главная страница"""
+    return render_template('main_page.html')
 
 
 @app.route('/authors')
 def authors():
     """Страница с информацией об авторах"""
-    return render_template('base.html')
+    return render_template('authors.html')
 
 
 @app.route("/posts")
@@ -226,7 +226,7 @@ def edit_news(id):
 @app.route('/lk')  # Личный кабинет
 def lk():
     """Страница личного кабинета"""
-    return 'Страница личного кабинета'
+    return render_template('person_room.html')
 
 
 if __name__ == '__main__':
