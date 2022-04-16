@@ -1,57 +1,37 @@
-from flask import Flask, render_template, redirect, url_for, request, abort
+import os
+
 import requests
+from flask import Flask, render_template, redirect, url_for, request, abort
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+
 from data import db_session
 from data.posts import Posts
 from data.users import User
-from forms.user import RegisterForm, LoginForm
-import os
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from forms.posts import PostsForm
+from forms.user import RegisterForm, LoginForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.route('/page')
-def page():
-    return r"""<!doctype html>
-        <html lang="en">
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <link rel="stylesheet"
-                  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-                  integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-                  crossorigin="anonymous">
-            <title>Проект</title>
-            </head>
-                <body>
-                <h1>Доступные страницы:</h1>
-                <div class="alert alert-dark" role="alert">
-                    \promotion
-                </div>
-                <div class="alert alert-success" role="alert">
-                    \authors
-                </div>
-                </body>
-                </html>"""
-
-
-# @app.route('/<title>')
-# @app.route('/index/<title>')
-# def index_base(title):
-#     return render_template('base.html', title=title)
+@app.route('/')
+def main_page():
+    """render_template('main_page.html')?"""
+    return render_template('base.html')
 
 
 @app.route('/authors')
 def authors():
-    return 'Страница с информацией об авторах'
+    """Страница с информацией об авторах"""
+    return render_template('base.html')
 
 
-@app.route("/")
-def index():
+@app.route("/posts")
+def posts():
+    """Страница с отображением записей ленты"""
     db_sess = db_session.create_session()
     posts = db_sess.query(Posts).filter(Posts.is_private != True)
     if current_user.is_authenticated:
@@ -101,7 +81,7 @@ def login():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/")
+            return redirect("/posts")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
@@ -111,40 +91,15 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """Выход из Аккаунта и перенаправление на главную страницу"""
     logout_user()
     return redirect("/")
 
 
-@app.route('/promotion')
-def promotion_image():
-    return f"""<!doctype html>
-        <html lang="en">
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-            <link rel="stylesheet"
-                  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-                  integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-                  crossorigin="anonymous">
-            <title>Проект</title>
-            </head>
-                <body>
-                <h1>Страница с приминением bootstrap</h1>
-                <div class="alert alert-dark" role="alert">
-                    Человечество вырастает из детства.
-                </div>
-                <div class="alert alert-success" role="alert">
-                    Человечеству мала одна планета.
-                </div>
-                </body>
-                </html>"""
-
-
-API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
-
-
-def coords(city):
-    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={city}&format=json"
+def coords(subject):
+    """Функция для страниц с городом и страной.
+        Отправляет запрос к геокодеру по названию сущности и возвращает координаты объекта"""
+    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={subject}&format=json"
     response = requests.get(geocoder_request)
     if response:
         json_response = response.json()
@@ -161,7 +116,8 @@ def coords(city):
 
 
 @app.route('/ground/<type_map>/<city>')
-def image_mars(type_map, city):
+def image_city(type_map, city):
+    """Страница вывода карты(спутникового снимка) города по названию"""
     api_server = "http://static-maps.yandex.ru/1.x/"
     params = {
         "ll": coords(city),
@@ -169,7 +125,6 @@ def image_mars(type_map, city):
         "l": type_map
     }
     response = requests.get(api_server, params=params)
-    print(params)
     if not response:
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
@@ -188,7 +143,35 @@ def image_mars(type_map, city):
                 <h4>{city.capitalize()}</h4>'''
 
 
-@app.route('/posts', methods=['GET', 'POST'])
+@app.route('/country/<type_map>/<country>')
+def image_country(type_map, country):
+    """Страница вывода карты(спутникового снимка) страны по ее названию"""
+    api_server = "http://static-maps.yandex.ru/1.x/"
+    params = {
+        "ll": coords(country),
+        "spn": '0.1,0.1',
+        "l": type_map
+    }
+    response = requests.get(api_server, params=params)
+    if not response:
+        print("Ошибка выполнения запроса:")
+        print("Http статус:", response.status_code, "(", response.reason, ")")
+        return f"""<title>Привет, {country.capitalize()}!</title>
+                    <h1>Мы не нашли страну "{country.capitalize()}", Она существует?<h1>
+                    <img src="{url_for('static', filename='pg_files/Paris.png')}" 
+                                           alt="здесь должна была быть картинка, но не нашлась">
+                                    <h4>Вот Вам Россия вместо "{country.capitalize()}"</h4>"""
+    else:
+        map_file = "static/pg_files/map.png"  # Запишем полученное изображение в файл.
+        with open(map_file, "wb") as file:
+            file.write(response.content)
+        return f'''<title>Привет, {country.capitalize()}!</title>
+                <img src="{url_for('static', filename='pg_files/map.png')}" 
+                       alt="здесь должна была быть картинка, но не нашлась">
+                <h4>{country.capitalize()}</h4>'''
+
+
+@app.route('/add_posts', methods=['GET', 'POST'])
 @login_required
 def add_posts():
     form = PostsForm()
@@ -201,7 +184,7 @@ def add_posts():
         current_user.posts.append(posts)
         db_sess.merge(current_user)
         db_sess.commit()
-        return redirect('/')
+        return redirect('/posts')
     return render_template('posts.html', title='Добавление новости',
                            form=form)
 
@@ -231,7 +214,7 @@ def edit_news(id):
             news.content = form.content.data
             news.is_private = form.is_private.data
             db_sess.commit()
-            return redirect('/')
+            return redirect('/posts')
         else:
             abort(404)
     return render_template('news.html',
@@ -240,8 +223,10 @@ def edit_news(id):
                            )
 
 
-# @app.route('/lk') # Личный кабинет
-# def lk():
+@app.route('/lk')  # Личный кабинет
+def lk():
+    """Страница личного кабинета"""
+    return 'Страница личного кабинета'
 
 
 if __name__ == '__main__':
