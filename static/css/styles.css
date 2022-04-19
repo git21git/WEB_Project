@@ -70,3 +70,7 @@ div.container6 h1 {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.fig {
+    text-align: center; /* Выравнивание по центру */
+   }
