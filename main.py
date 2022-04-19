@@ -127,19 +127,15 @@ def image_city(type_map, city):
     if not response:
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
-        return f"""<title>Привет, {city.capitalize()}!</title>
-                    <h1>Мы не нашли город "{city.capitalize()}", Он существует?<h1>
-                    <img src="{url_for('static', filename='pg_files/Paris.png')}" 
-                                           alt="здесь должна была быть картинка, но не нашлась">
-                                    <h4>Вот Вам Париж вместо "{city.capitalize()}"</h4>"""
+        return render_template('geo_right.html', obj=city.capitalize(),
+                               file_place=f"{url_for('static', filename='pg_files/Paris.png')}")
+
     else:
         map_file = "static/pg_files/map.png"  # Запишем полученное изображение в файл.
         with open(map_file, "wb") as file:
             file.write(response.content)
-        return f'''<title>Привет, {city.capitalize()}!</title>
-                <img src="{url_for('static', filename='pg_files/map.png')}" 
-                       alt="здесь должна была быть картинка, но не нашлась">
-                <h4>{city.capitalize()}</h4>'''
+        return render_template('geo_right.html', obj=city.capitalize(),
+                               file_place=f"{url_for('static', filename='pg_files/map.png')}")
 
 
 @app.route('/country/<type_map>/<country>')
@@ -155,19 +151,14 @@ def image_country(type_map, country):
     if not response:
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
-        return f"""<title>Привет, {country.capitalize()}!</title>
-                    <h1>Мы не нашли страну "{country.capitalize()}", Она существует?<h1>
-                    <img src="{url_for('static', filename='pg_files/Paris.png')}" 
-                                           alt="здесь должна была быть картинка, но не нашлась">
-                                    <h4>Вот Вам Россия вместо "{country.capitalize()}"</h4>"""
+        return render_template('geo_errors.html', obj=country.capitalize(),
+                               file_place=f"{url_for('static', filename='pg_files/Paris.png')}")
     else:
         map_file = "static/pg_files/map.png"  # Запишем полученное изображение в файл.
         with open(map_file, "wb") as file:
             file.write(response.content)
-        return f'''<title>Привет, {country.capitalize()}!</title>
-                <img src="{url_for('static', filename='pg_files/map.png')}" 
-                       alt="здесь должна была быть картинка, но не нашлась">
-                <h4>{country.capitalize()}</h4>'''
+        return render_template('geo_right.html', obj=country.capitalize(),
+                               file_place=f"{url_for('static', filename='pg_files/map.png')}")
 
 
 @app.route('/add_posts', methods=['GET', 'POST'])
