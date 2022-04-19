@@ -15,16 +15,16 @@
 <header>
 
     <nav class="navbar navbar-light bg-light"><h1 class="text_for_name">Remarques</h1>
-<!--        <a class="navbar-brand" href="#"><button>WEB ONE</button>></a>-->
+        <!--        <a class="navbar-brand" href="#"><button>WEB ONE</button>></a>-->
 
 
         {% if current_user.is_authenticated %}
         <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
         {% else %}
         <p>
-            <a class="floating-button" href="/country/map/Россия" >Country</a>
-            <a class="floating-button" href="/ground/map/Москва" >City</a>
-            <a class="floating-button" href="/authors" >Authors</a>
+            <a class="floating-button" href="/country/map/Россия">Country</a>
+            <a class="floating-button" href="/ground/map/Москва">City</a>
+            <a class="floating-button" href="/authors">Authors</a>
             <a class="floating-button" href="/register">Sign up</a>
             <a class="floating-button" href="/login">Sign in</a>
         </p>
@@ -37,5 +37,7 @@
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
+
 </body>
+<footer><p align="center"><a class="floating-button" href="#">Back to top</a></p></footer>
 </html>
