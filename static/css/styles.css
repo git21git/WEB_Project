@@ -26,6 +26,26 @@ body {
  letter-spacing: 3px;
 }
 
+.text_main_screen {
+ font-family: 'Montserrat', sans-serif;
+ letter-spacing: 3px;
+ font-weight:bold;
+ text-align: center;
+ -webkit-text-stroke: 0.5px white;
+}
+
+.vertical_align {
+ vertical-align: middle;
+}
+
+div.container6 {
+  height: 35em;
+  display: flex;
+  align-items: center;
+  justify-content: center }
+div.container6 h1 {
+  margin: 0 }
+
 .floating-button:hover {
   background: #95c5e6;
   box-shadow: 0 15px 20px rgba(149, 197, 230, .4);
@@ -35,4 +55,18 @@ body {
 
 .white {
   color: #fff;
+}
+
+.parallax {
+    /* The image used */
+    background-image: url("kniga2.jpg");
+
+    /* Set a specific height */
+    min-height: 600px;
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
