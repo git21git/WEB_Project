@@ -178,6 +178,8 @@ def add_posts():
     return render_template('posts.html', title='Добавление публикации',
                            form=form)
 
+# @app.route('/info_users', methods=['GET', 'POST'])
+# def get_info_users():
 
 @app.route('/posts/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -231,7 +233,7 @@ def news_delete(id):
 @app.route('/lk')  # Личный кабинет
 def lk():
     """Страница личного кабинета"""
-    return render_template('person_room.html')
+    return render_template('lk.html')
 
 
 if __name__ == '__main__':

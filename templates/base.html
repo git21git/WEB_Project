@@ -14,12 +14,13 @@
 <body>
 <header>
 
-    <nav class="navbar navbar-light bg-light"><h1 class="text_for_name">Remarques</h1>
+    <nav class="navbar navbar-light bg-light"><h1 class="text_for_name">The Remarques</h1>
         <!--        <a class="navbar-brand" href="#"><button>WEB ONE</button>></a>-->
 
 
         {% if current_user.is_authenticated %}
-        <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+        <a class="navbar-brand" href="/lk">{{ current_user.name }}</a>
+
         {% else %}
         <p>
             <a class="floating-button" href="/country/map/Россия">Country</a>
@@ -33,17 +34,20 @@
 
 </header>
 <!-- Begin page content -->
-<div class="parallax">
-    <div class=container6>
-        <h1 class="text_main_screen">Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>
-<!--        <h1>Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>-->
-    </div>>
-</div>
+<!--<div class="parallax">-->
+<!--    <div class=container6>-->
+<!--        <h1 class="text_main_screen">Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>-->
+<!--&lt;!&ndash;        <h1>Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>&ndash;&gt;-->
+<!--    </div>>-->
+<!--</div>-->
 
-<main role="main" class="container">
+<!--<main role="main" class="container">-->
+<main>
     {% block content %}{% endblock %}
 </main>
 
 </body>
-<footer><p align="center"><a class="floating-button" href="#">Back to top</a></p></footer>
+<footer class="bg-light navbar-light">
+    <p align="center"><a class="floating-button" href="#">Back to top</a></p>
+</footer>
 </html>
