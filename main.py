@@ -9,10 +9,11 @@ from data.posts import Posts
 from data.users import User
 from forms.posts import PostsForm
 from forms.user import RegisterForm, LoginForm
+from static.const import SECRET_KEY, API_KEY
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
+app.config['SECRET_KEY'] = SECRET_KEY
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -46,12 +47,14 @@ def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('register.html',
+                                   title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+            return render_template('register.html',
+                                   title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
@@ -63,7 +66,9 @@ def reqister():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    return render_template('register.html',
+                           title='Регистрация',
+                           form=form)
 
 
 @login_manager.user_loader
@@ -84,7 +89,9 @@ def login():
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+    return render_template('login.html',
+                           title='Авторизация',
+                           form=form)
 
 
 @app.route('/logout')
@@ -98,16 +105,21 @@ def logout():
 def coords(subject):
     """Функция для страниц с городом и страной.
         Отправляет запрос к геокодеру по названию сущности и возвращает координаты объекта"""
-    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}&geocode={subject}&format=json"
+    geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?" \
+                       f"apikey={API_KEY}" \
+                       f"&geocode={subject}&format=json"
     response = requests.get(geocoder_request)
     if response:
         json_response = response.json()
 
         if json_response["response"]["GeoObjectCollection"]["featureMember"]:
+            """Возвращаем координаты в формате через запятую"""
             toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
             toponym_coodrinates = toponym["Point"]["pos"]
-            return toponym_coodrinates.replace(' ', ',')
+            toponym_coodrinates = toponym_coodrinates.replace(' ', ',')
+            return toponym_coodrinates
     else:
+        """В случае ошибки печатаем сообщение"""
         print("Ошибка выполнения запроса:")
         print(geocoder_request)
         print("Http статус:", response.status_code, "(", response.reason, ")")
@@ -125,6 +137,7 @@ def image_city(type_map, city):
     }
     response = requests.get(api_server, params=params)
     if not response:
+        """Если возникла ошибка, то выводим заранее заготовленное фото"""
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
         return render_template('geo_right.html', obj=city.capitalize(),
@@ -149,6 +162,7 @@ def image_country(type_map, country):
     }
     response = requests.get(api_server, params=params)
     if not response:
+        """Если возникла ошибка, то выводим заранее заготовленное фото"""
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
         return render_template('geo_errors.html', obj=country.capitalize(),
@@ -175,8 +189,10 @@ def add_posts():
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/posts')
-    return render_template('posts.html', title='Добавление публикации',
+    return render_template('posts.html',
+                           title='Добавление публикации',
                            form=form)
+
 
 # @app.route('/info_users', methods=['GET', 'POST'])
 # def get_info_users():
@@ -236,7 +252,70 @@ def lk():
     return render_template('lk.html')
 
 
+@app.route('/load_photo', methods=['POST', 'GET'])
+def load_photo():
+    file = url_for('static', filename='img/photo.jpg')
+    print(12)
+    if request.method == 'GET':
+        return f'''<!doctype html>
+                        <html lang="en">
+                          <head>
+                            <meta charset="utf-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+                            <link rel="stylesheet" type="text/css" href="{url_for('static', filename='css/style.css')}" />
+                            <title>Отбор </title>
+                          </head>
+                          <body>
+                            <h1 align="center">Загрузка фотографии</h1>
+                            <h3 align="center">для участия в миссии</h3>
+                            <div>
+                                <form class="login_form" method="post" enctype="multipart/form-data">
+                                   <div class="form-group">
+                                        <label for="photo">Приложите фотографию</label>
+                                        <input type="file" class="form-control-file" id="photo" name="file">
+                                    </div>
+                                    <img src="{file}" alt="Фото">
+                                    <br>
+                                    <button type="submit" class="btn btn-primary">Отправить</button>
+                                </form>
+                            </div>
+                          </body>
+                        </html>'''
+    elif request.method == 'POST':
+        f = request.files['file']
+        with open(f'static/img/{f.filename}', 'wb') as file:
+            file.write(f.read())
+        file = url_for('static', filename=f'img/{f.filename}')
+        return f'''<!doctype html>
+                        <html lang="en">
+                          <head>
+                            <meta charset="utf-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+                            <link rel="stylesheet" type="text/css" href="{url_for('static', filename='css/style.css')}" />
+                            <title>Отбор </title>
+                          </head>
+                          <body>
+                            <h1 align="center">Загрузка фотографии</h1>
+                            <h3 align="center">для участия в миссии</h3>
+                            <div>
+                                <form class="login_form" method="post" enctype="multipart/form-data">
+                                   <div class="form-group">
+                                        <label for="photo">Приложите фотографию</label>
+                                        <input type="file" class="form-control-file" id="photo" name="file">
+                                    </div>
+                                    <img src="{file}" alt="Фото">
+                                    <br>
+                                    <button type="submit" class="btn btn-primary">Отправить</button>
+                                </form>
+                            </div>
+                          </body>
+                        </html>'''
+
+
 if __name__ == '__main__':
     db_session.global_init("db/posts.db")
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+    # app.run(port=8080, host='127.0.1.1')
