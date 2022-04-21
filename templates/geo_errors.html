@@ -1,13 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+              crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+        <title>Привет, {{ obj }}! </title>
+    </head>
 
-
-<title>Привет, {{ obj }}! </title>
-<h1 class="fig">Мы не нашли объект "{{ obj }}" на картах. Он существует?</h1>
-<h1 class="fig">А тип карты указан правильно? Да? Тогда действительно странно... Будет разбираться.</h1>
-<p class="fig"><img src={{ file_place }}
-                    alt="здесь должна была быть картинка, но не нашлась"></p>
-<h4>Вот Вам Париж, Франция вместо - {{ obj }}</h4>
-
+    <h1 class="fig">Мы не нашли объект "{{ obj }}" на картах. Он существует?</h1>
+    <h1 class="fig">А тип карты указан правильно? Да? Тогда действительно странно... Будет разбираться.</h1>
+    <p class="fig"><img src={{ file_place }}
+                        alt="здесь должна была быть картинка, но не нашлась"></p>
+    <h4>Вот Вам Париж, Франция вместо - {{ obj }}</h4>
+</div>
 {% endblock %}
