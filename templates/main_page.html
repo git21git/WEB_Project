@@ -44,4 +44,11 @@
         </div>
     {% endfor %}
 
+    <a href="/?page={{ current_page - 1 }}" class="btn btn-primary">
+        Назад
+    </a>
+    <a href="/?page={{ current_page + 1 }}" class="btn btn-primary">
+        Вперед
+    </a>
+
 {% endblock %}

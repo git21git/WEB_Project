@@ -21,16 +21,25 @@ login_manager.init_app(app)
 @app.route('/')
 def main_page():
     """Главная страница"""
+    page_number = int(request.args.get('page', 1))
+    if page_number < 1:
+        redirect('/?page=1')
+
+    limit = 5
+    offset = (page_number - 1) * limit
+
     db_sess = db_session.create_session()
 
     if current_user.is_authenticated:
         posts = db_sess.query(Posts).filter(
             (Posts.user == current_user) | (Posts.is_private != True)
-        )
+        ).limit(limit).offset(offset)
     else:
-        posts = db_sess.query(Posts).filter(Posts.is_private != True)
+        posts = db_sess.query(Posts).filter(
+            Posts.is_private != True
+        ).limit(limit).offset(offset)
 
-    return render_template("main_page.html", posts=posts)
+    return render_template("main_page.html", posts=posts, current_page=page_number)
 
 
 @app.route('/authors')
