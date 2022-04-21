@@ -1,6 +1,6 @@
 <!doctype html>
-
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,18 +9,20 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="static/css/styles.css">
-    <title>{{title}}</title>
+    <title>{{ title }}</title>
 </head>
+
 <body>
 <header>
-
-    <nav class="navbar navbar-light bg-light"><h1 class="text_for_name">The Remarques</h1>
-        <!--        <a class="navbar-brand" href="#"><button>WEB ONE</button>></a>-->
-
+    <nav class="navbar navbar-light bg-light">
+        <h1>
+            <a class="text_for_name title_link" href="/">
+                The Remarques
+            </a>
+        </h1>
 
         {% if current_user.is_authenticated %}
         <a class="navbar-brand" href="/lk">{{ current_user.name }}</a>
-
         {% else %}
         <p>
             <a class="floating-button" href="/country/map/Россия">Country</a>
@@ -31,23 +33,15 @@
         </p>
         {% endif %}
     </nav>
-
 </header>
-<!-- Begin page content -->
-<!--<div class="parallax">-->
-<!--    <div class=container6>-->
-<!--        <h1 class="text_main_screen">Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>-->
-<!--&lt;!&ndash;        <h1>Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>&ndash;&gt;-->
-<!--    </div>>-->
-<!--</div>-->
 
-<!--<main role="main" class="container">-->
 <main>
     {% block content %}{% endblock %}
 </main>
 
-</body>
 <footer class="bg-light navbar-light">
     <p align="center"><a class="floating-button" href="#">Back to top</a></p>
 </footer>
+</body>
+
 </html>

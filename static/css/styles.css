@@ -26,6 +26,11 @@ body {
  letter-spacing: 3px;
 }
 
+.title_link, .title_link:hover {
+    text-decoration: none;
+    color: #212529;
+}
+
 .text_main_screen {
  font-family: 'Montserrat', sans-serif;
  letter-spacing: 3px;
