@@ -1,37 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="parallax">
-    <div class=container6>
-        <h1 class="text_main_screen">The Remarques - пишите, читайте, познавайте мир вокруг себя!</h1>
-        <!--        <h1>Remarques — пишите свой блог, делитесь историями с другими людьми!</h1>-->
+    <div class="parallax">
+        <div class=container6>
+            <h1 class="text_main_screen">The Remarques - пишите, читайте, познавайте мир вокруг себя!</h1>
+        </div>
     </div>
-</div>
-<div class="just_photo">
-    <div class="container6">
-        <h1 class="text_main_screen">The Remarques — проект, который поможет людям
-            преодолеть свои проблемы и помочь решить чужие!
-            пишите свой блог, делитесь историями с другими людьми!</h1>
+    <div class="just_photo">
+        <div class="container6">
+            <h1 class="text_main_screen">The Remarques — проект, который поможет людям
+                преодолеть свои проблемы и помочь решить чужие!
+                пишите свой блог, делитесь историями с другими людьми!</h1>
+        </div>
     </div>
-</div>
 
-<div class="container">
-    <h1 class="text_for_name" align="center">Главная страница</h1>
-    <h4> сейчас существуют страницы /authors /country/map/Россия
-        /ground/map/Москва /posts /add_posts /lk
-    </h4>
-    <h4>
-        Думая над темой для проекта мы вдохновились соц сетями и решили создать мини ленту публикаций от пользователей
+    <h1 class="text_for_name" align="center">The notes</h1>
 
-        Цель: Разработать сайт на flask
+    {% if current_user.is_authenticated %}
+        <a href="add_posts" class="btn btn-secondary">Добавить Публикацию</a>
+    {% endif %}
 
-        Задачи:
-        1. Изучить организацию подобных приложений.
-        2. Спроектировать пользовательский интерфейс.
-        3. Реализовать Взаимодействие с API и ORM моделями
-        4. Оформить проект.
-
-    </h4>
-</div>
+    {% for item in posts %}
+        <div class="container">
+            <div class="col-md6 border rounded">
+                <h2>{{ item.title }}</h2>
+                <div>
+                    {{ item.content }}
+                </div>
+                <div>
+                    Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+                </div>
+                {% if current_user.is_authenticated and current_user == item.user %}
+                    <div>
+                        <a href="/posts/{{ item.id }}" class="btn btn-warning">
+                            Изменить
+                        </a>
+                        <a href="/posts_delete/{{ item.id }}" class="btn btn-danger">
+                            Удалить
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
 
 {% endblock %}

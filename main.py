@@ -21,7 +21,16 @@ login_manager.init_app(app)
 @app.route('/')
 def main_page():
     """Главная страница"""
-    return render_template('main_page.html')
+    db_sess = db_session.create_session()
+
+    if current_user.is_authenticated:
+        posts = db_sess.query(Posts).filter(
+            (Posts.user == current_user) | (Posts.is_private != True)
+        )
+    else:
+        posts = db_sess.query(Posts).filter(Posts.is_private != True)
+
+    return render_template("main_page.html", posts=posts)
 
 
 @app.route('/authors')
@@ -30,15 +39,16 @@ def authors():
     return render_template('authors.html')
 
 
-@app.route("/posts")
-def posts():
+@app.route("/users_info")
+def user_info():
     """Страница с отображением записей ленты"""
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
-        posts = db_sess.query(Posts).filter(
-            (Posts.user == current_user) | (Posts.is_private != True))
+        users_info = db_sess.query(User).filter(
+            (User.user == current_user))
+        users_info = db_sess.query(Posts).filter(Posts.is_private != True)
     else:
-        posts = db_sess.query(Posts).filter(Posts.is_private != True)
+        redirect('/login')
     return render_template("index.html", posts=posts)
 
 
@@ -85,7 +95,7 @@ def login():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/posts")
+            return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
@@ -188,7 +198,7 @@ def add_posts():
         current_user.posts.append(posts)
         db_sess.merge(current_user)
         db_sess.commit()
-        return redirect('/posts')
+        return redirect('/')
     return render_template('posts.html',
                            title='Добавление публикации',
                            form=form)
@@ -222,7 +232,7 @@ def edit_post(id):
             posts.content = form.content.data
             posts.is_private = form.is_private.data
             db_sess.commit()
-            return redirect('/posts')
+            return redirect('/')
         else:
             abort(404)
     return render_template('posts.html',
@@ -243,7 +253,7 @@ def news_delete(id):
         db_sess.commit()
     else:
         abort(404)
-    return redirect('/posts')
+    return redirect('/')
 
 
 @app.route('/lk')  # Личный кабинет
