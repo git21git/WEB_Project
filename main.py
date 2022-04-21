@@ -8,7 +8,7 @@ from data import db_session
 from data.posts import Posts
 from data.users import User
 from forms.posts import PostsForm
-from forms.user import RegisterForm, LoginForm
+from forms.user import EditProfileForm, RegisterForm, LoginForm
 from static.const import SECRET_KEY, API_KEY
 
 app = Flask(__name__)
@@ -37,19 +37,6 @@ def main_page():
 def authors():
     """Страница с информацией об авторах"""
     return render_template('authors.html')
-
-
-@app.route("/users_info")
-def user_info():
-    """Страница с отображением записей ленты"""
-    db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-        users_info = db_sess.query(User).filter(
-            (User.user == current_user))
-        users_info = db_sess.query(Posts).filter(Posts.is_private != True)
-    else:
-        redirect('/login')
-    return render_template("index.html", posts=posts)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -256,10 +243,52 @@ def news_delete(id):
     return redirect('/')
 
 
-@app.route('/lk')  # Личный кабинет
+@app.route('/lk', methods=['GET'])  # Личный кабинет
+@login_required
 def lk():
     """Страница личного кабинета"""
-    return render_template('lk.html')
+    form = EditProfileForm()
+    db_sess = db_session.create_session()
+
+    user = db_sess.query(User).filter(
+        User.id == current_user.id
+    ).first()
+
+    if user:
+        form.email.data = user.email
+        form.name.data = user.name
+        form.about.data = user.about
+
+        return render_template(
+            'lk.html',
+            title='Редактирование профиля',
+            form=form
+        )
+    else:
+        abort(404)
+
+
+@app.route('/edit_profile', methods=['POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(
+            User.id == current_user.id
+        ).first()
+
+        if user:
+            user.email = form.email.data
+            user.name = form.name.data
+            user.about = form.about.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    else:
+        abort(400)
 
 
 @app.route('/load_photo', methods=['POST', 'GET'])

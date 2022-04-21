@@ -22,15 +22,15 @@
         </h1>
 
         {% if current_user.is_authenticated %}
-        <a class="navbar-brand" href="/lk">{{ current_user.name }}</a>
+            <a class="navbar-brand" href="/lk">{{ current_user.name }}</a>
         {% else %}
-        <p>
-            <a class="floating-button" href="/country/map/Россия">Country</a>
-            <a class="floating-button" href="/ground/map/Москва">City</a>
-            <a class="floating-button" href="/authors">Authors</a>
-            <a class="floating-button" href="/register">Sign up</a>
-            <a class="floating-button" href="/login">Sign in</a>
-        </p>
+            <p>
+                <a class="floating-button" href="/country/map/Россия">Country</a>
+                <a class="floating-button" href="/ground/map/Москва">City</a>
+                <a class="floating-button" href="/authors">Authors</a>
+                <a class="floating-button" href="/register">Sign up</a>
+                <a class="floating-button" href="/login">Sign in</a>
+            </p>
         {% endif %}
     </nav>
 </header>
@@ -39,9 +39,12 @@
     {% block content %}{% endblock %}
 </main>
 
-<footer class="bg-light navbar-light">
-    <p align="center"><a class="floating-button" href="#">Back to top</a></p>
-</footer>
+{% block footer %}
+    <footer class="bg-light navbar-light">
+        <p align="center"><a class="floating-button" href="#">Back to top</a></p>
+    </footer>
+{% endblock %}
+
 </body>
 
 </html>

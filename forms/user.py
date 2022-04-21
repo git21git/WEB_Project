@@ -18,3 +18,10 @@ class LoginForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class EditProfileForm(FlaskForm):
+    email = EmailField('Почта', validators=[DataRequired()])
+    name = StringField('Имя пользователя', validators=[DataRequired()])
+    about = TextAreaField("Немного о себе")
+    submit = SubmitField('Изменить')
