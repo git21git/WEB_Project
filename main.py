@@ -138,14 +138,14 @@ def image_city(type_map, city):
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
         return render_template('geo_right.html', obj=city.capitalize(),
-                               file_place=f"{url_for('static', filename='pg_files/Paris.png')}")
+                               file_place="/static/pg_files/Moscow.png")
 
     else:
         map_file = "static/pg_files/map.png"  # Запишем полученное изображение в файл.
         with open(map_file, "wb") as file:
             file.write(response.content)
         return render_template('geo_right.html', obj=city.capitalize(),
-                               file_place=f"{url_for('static', filename='pg_files/map.png')}")
+                               file_place="/static/pg_files/map.png")
 
 
 @app.route('/country/<type_map>/<country>')
@@ -154,7 +154,7 @@ def image_country(type_map, country):
     api_server = "http://static-maps.yandex.ru/1.x/"
     params = {
         "ll": coords(country),
-        "spn": '0.1,0.1',
+        "spn": '0.00009999,0.99889',
         "l": type_map
     }
     response = requests.get(api_server, params=params)
@@ -163,7 +163,7 @@ def image_country(type_map, country):
         print("Ошибка выполнения запроса:")
         print("Http статус:", response.status_code, "(", response.reason, ")")
         return render_template('geo_errors.html', obj=country.capitalize(),
-                               file_place=f"{url_for('static', filename='pg_files/Paris.png')}")
+                               file_place=f"{url_for('static', filename='pg_files/Moscow.png')}")
     else:
         map_file = "static/pg_files/map.png"  # Запишем полученное изображение в файл.
         with open(map_file, "wb") as file:
