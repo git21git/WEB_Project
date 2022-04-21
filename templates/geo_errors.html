@@ -1,4 +1,140 @@
-{% extends "base.html" %}
+<!doctype html>
+<html lang="en">
+<style>
+body {
+  background: url(https://html5book.ru/wp-content/uploads/2015/07/background39.png);
+}
+.floating-button {
+  text-decoration: none;
+  display: inline-block;
+  width: 140px;
+  height: 45px;
+  line-height: 45px;
+  border-radius: 45px;
+  margin: 10px 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 3px;
+  font-weight: 600;
+  color: #524f4e;
+  background: white;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
+  transition: .3s;
+}
+
+.text_for_name {
+ font-family: 'Montserrat', sans-serif;
+ letter-spacing: 3px;
+}
+
+.title_link, .title_link:hover {
+    text-decoration: none;
+    color: #212529;
+}
+
+.text_main_screen {
+ font-family: 'Montserrat', sans-serif;
+ letter-spacing: 3px;
+ font-weight:bold;
+ text-align: center;
+ -webkit-text-stroke: 0.5px white;
+}
+
+.vertical_align {
+ vertical-align: middle;
+}
+
+div.container6 {
+  height: 35em;
+  display: flex;
+  align-items: center;
+  justify-content: center }
+div.container6 h1 {
+  margin: 0 }
+
+.floating-button:hover {
+  background: #95c5e6;
+  box-shadow: 0 15px 20px rgba(149, 197, 230, .4);
+  color: white;
+  transform: translateY(-7px);
+}
+
+.white {
+  color: #fff;
+}
+
+.parallax {
+    /* The image used */
+    background-image: url("kniga2.jpg");
+
+    /* Set a specific height */
+    min-height: 600px;
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.just_photo {
+    /* The image used */
+    background-image: url("3photo.jpg");
+    /* Set a specific height */
+    min-height: 500px;
+
+    /* Create the parallax scrolling effect */
+    background-position: center;
+    background-size: cover;
+}
+
+.fig {
+    text-align: center; /* Выравнивание по центру */
+   }
+
+#footer {
+	width: 1000px;
+	margin: -100px auto 0;
+	height: 100px;
+	position: relative;
+	background-color: rgb(51,51,204);
+}
+</style>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+    <title>{{ title }}</title>
+</head>
+
+<body>
+<header>
+    <nav class="navbar navbar-light bg-light">
+        <h1>
+            <a class="text_for_name title_link" href="/">
+                The Remarques
+            </a>
+        </h1>
+
+        {% if current_user.is_authenticated %}
+        <a class="navbar-brand" href="/lk">{{ current_user.name }}</a>
+        {% else %}
+        <p>
+            <a class="floating-button" href="/country/map/Россия">Country</a>
+            <a class="floating-button" href="/ground/map/Москва">City</a>
+            <a class="floating-button" href="/authors">Authors</a>
+            <a class="floating-button" href="/register">Sign up</a>
+            <a class="floating-button" href="/login">Sign in</a>
+        </p>
+        {% endif %}
+    </nav>
+</header>
 
 {% block content %}
 <div class="container">
@@ -17,6 +153,10 @@
     <h1 class="fig">А тип карты указан правильно? Да? Тогда действительно странно... Будет разбираться.</h1>
     <p class="fig"><img src={{ file_place }}
                         alt="здесь должна была быть картинка, но не нашлась"></p>
-    <h4>Вот Вам Париж, Франция вместо - {{ obj }}</h4>
+    <h4 align="center">Вот Вам Москва, Россия вместо - {{ obj }}</h4>
 </div>
+<footer class="bg-light navbar-light">
+    <p align="center"><a class="floating-button" href="#">Back to top</a></p>
+</footer>
+</body>
 {% endblock %}
