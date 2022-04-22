@@ -20,7 +20,10 @@ login_manager.init_app(app)
 
 @app.route('/')
 def main_page():
-    """Главная страница"""
+    """Главная страница
+     для всех пользователей"""
+    """Загружаем текст н астраницу
+    Используем txt """
     with open(f'static/text/intro_1.txt', 'r', encoding='utf-8') as file:
         intro_1 = file.read()
     with open(f'static/text/intro_2.txt', 'r', encoding='utf-8') as file:
@@ -52,7 +55,8 @@ def main_page():
 
 @app.route('/authors')
 def authors():
-    """Страница с информацией об авторах"""
+    """Страница с информацией об авторах
+    Не Только для авторизованных пользователей"""
     title = 'About us'
     name = 'Александр Пичугин и Мария Чудинова'
     return render_template('authors.html',
@@ -122,14 +126,18 @@ def login():
 @app.route('/log_out')
 @login_required
 def log_out():
-    """Выход из Аккаунта и перенаправление на главную страницу"""
+    """Выход из Аккаунта и перенаправление на главную страницу
+    Только для авторизованных пользователей"""
     logout_user()
     return redirect("/")
 
 
 def coords(subject):
     """Функция для страниц с городом и страной.
-        Отправляет запрос к геокодеру по названию сущности и возвращает координаты объекта"""
+        Отправляет запрос к геокодеру по названию сущности и
+        возвращает координаты объекта
+        Не зависит от авторизации
+        """
     geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?" \
                        f"apikey={API_KEY}" \
                        f"&geocode={subject}&format=json"
@@ -153,7 +161,8 @@ def coords(subject):
 
 @app.route('/ground/<type_map>/<city>')
 def image_city(type_map, city):
-    """Страница вывода карты(спутникового снимка) города по названию"""
+    """Страница вывода карты(спутникового снимка) города по названию
+    Не Только для авторизованных пользователей"""
     api_server = "http://static-maps.yandex.ru/1.x/"
     params = {
         "ll": coords(city),
@@ -178,7 +187,8 @@ def image_city(type_map, city):
 
 @app.route('/country/<type_map>/<country>')
 def image_country(type_map, country):
-    """Страница вывода карты(спутникового снимка) страны по ее названию"""
+    """Страница вывода карты(спутникового снимка) страны по ее названию
+    Не Только для авторизованных пользователей"""
     api_server = "http://static-maps.yandex.ru/1.x/"
     params = {
         "ll": coords(country),
@@ -203,6 +213,8 @@ def image_country(type_map, country):
 @app.route('/add_posts', methods=['GET', 'POST'])
 @login_required
 def add_posts():
+    """Добавление публикаций
+    Только для авторизованных пользователей"""
     form = PostsForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -222,6 +234,8 @@ def add_posts():
 @app.route('/posts/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(id):
+    """Изменение записей
+    Только для авторизованных пользователей"""
     form = PostsForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -255,6 +269,8 @@ def edit_post(id):
 
 @app.route('/load_photo', methods=['POST', 'GET'])
 def load_photo():
+    """Страница с загрузкой фотографий
+    Не Только для авторизованных пользователей"""
     file = url_for('static', filename='img/photo.jpg')
     if request.method == 'GET':
         return f'''<!doctype html>
@@ -317,6 +333,8 @@ def load_photo():
 @app.route('/posts_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def news_delete(id):
+    """Удаление новостей
+    Только для авторизованных пользователей"""
     db_sess = db_session.create_session()
     posts = db_sess.query(Posts).filter(Posts.id == id,
                                         Posts.user == current_user
@@ -333,7 +351,8 @@ def news_delete(id):
 @login_required
 def lk():
     """Страница личного кабинета
-        пользователь может редактировать информацию о себе"""
+        пользователь может посмотреть информацию о себе
+        Только для авторизованных пользователей"""
     form = EditProfileForm()
     db_sess = db_session.create_session()
 
@@ -358,7 +377,9 @@ def lk():
 @app.route('/edit_profile', methods=['POST'])
 @login_required
 def edit_profile():
-    """"""
+    """Изменение данных профиля пользователя
+        Поле о себе, Имя, почта
+        Только для авторизованных пользователей"""
     form = EditProfileForm()
 
     if form.validate_on_submit():
@@ -383,7 +404,8 @@ def edit_profile():
 def gallery():
     """Страница с фото-новостями
         Пользователь может загружать новые новости
-        Вывод осуществляется при помощи bootstrap(карусель)"""
+        Вывод осуществляется при помощи bootstrap(карусель)
+        Не только для авторизованных пользователей"""
     title = 'Фото'
     intro_title = 'Фото-Новости'
     pictures = os.listdir('static/img')
@@ -398,6 +420,60 @@ def gallery():
         with open(f'static/img/3.jpg', 'wb') as file:
             file.write(f.read())
         return redirect('/gallery')
+
+
+@app.route('/about_pg', methods=['POST', 'GET'])
+def about_pg():
+    """Страница с основной информацией о проекте
+    Не только для авторизованных пользователей"""
+    return f"""<!doctype html>
+                <html lang="en">
+                
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                    <link rel="stylesheet"
+                          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+                          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+                          crossorigin="anonymous">
+                    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
+                    <title>About_pg</title>
+                </head>
+                
+                <body>
+                <header>
+                    <nav class="navbar navbar-light bg-light">
+                        <h1>
+                            <a class="text_for_name title_link" href="/">
+                                The Remarques
+                            </a>
+                        </h1>
+                            <p>
+                                <a class="floating-button" href="/country/map/Россия">Country</a>
+                                <a class="floating-button" href="/ground/map/Москва">City</a>
+                                <a class="floating-button" href="/authors">Authors</a>
+                                <a class="floating-button" href="/register">Sign up</a>
+                                <a class="floating-button" href="/login">Sign in</a>
+                            </p>
+                    </nav>
+                </header>
+                            <h4>
+                            Думая над темой для проекта мы решили создать 
+                                мини ленту публикаций от пользователей
+                        
+                            <p>Цель: Разработать сайт на flask</p>
+                        
+                            <p>Задачи: </p>
+                            <p>1. Изучить организацию подобных приложений.</p>
+                            <p>2. Спроектировать пользовательский интерфейс.</p>
+                            <p>3. Реализовать Взаимодействие с API и ORM моделями</p>
+                            <p>4. Оформить проект.</p>
+                        
+                            </h4>
+                <footer class="bg-light navbar-light">
+                    <p align="center"><a class="floating-button" href="#">Back to top</a></p>
+                </footer>
+            """
 
 
 if __name__ == '__main__':
