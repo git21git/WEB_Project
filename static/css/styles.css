@@ -180,3 +180,11 @@ div.container6 h1 {
     border-radius: 1em
     box-shadow: black 0.5em 0.5em 0.3em
 }
+
+.block2 {
+    background-color: black;
+    margin: 0 auto;
+    border: solid thick rgb(254, 250, 239);
+    border-radius: 1em
+    box-shadow: black 0.5em 0.5em 0.3em
+}
