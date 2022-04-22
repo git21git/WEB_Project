@@ -11,42 +11,50 @@
             <h1 class="text_main_screen"> {{ intro_2 }} </h1>
         </div>
     </div>
+</div>
 
-    <h1 class="text_for_name" align="center">The notes</h1>
+<h1 class="text_for_name" align="center">The notes</h1>
 
-    {% if current_user.is_authenticated %}
-        <a href="add_posts" class="btn btn-secondary">Добавить Публикацию</a>
-    {% endif %}
+{% if current_user.is_authenticated %}
+<div class="container">
+    <a href="add_posts" class="btn btn-secondary">Добавить Публикацию</a>
 
-    {% for item in posts %}
-        <div class="container">
-            <div class="col-md6 border rounded">
-                <h2>{{ item.title }}</h2>
-                <div>
-                    {{ item.content }}
-                </div>
-                <div>
-                    Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
-                </div>
-                {% if current_user.is_authenticated and current_user == item.user %}
-                    <div>
-                        <a href="/posts/{{ item.id }}" class="btn btn-warning">
-                            Изменить
-                        </a>
-                        <a href="/posts_delete/{{ item.id }}" class="btn btn-danger">
-                            Удалить
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
+</div>
+<br>
+{% endif %}
+
+{% for item in posts %}
+<div class="container">
+    <div class="block">
+        <h2>{{ item.title }}</h2>
+        <div>
+            {{ item.content }}
         </div>
-    {% endfor %}
+        <div>
+            Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+        </div>
+        {% if current_user.is_authenticated and current_user == item.user %}
+        <div>
+            <a href="/posts/{{ item.id }}" class="floating-button">
+                Изменить
+            </a>
+            <a href="/posts_delete/{{ item.id }}" class="floating-button">
+                Удалить
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <br>
+</div>
+{% endfor %}
 
-    <a href="/?page={{ current_page - 1 }}" class="btn btn-primary">
-        Назад
+<div class="container">
+    <a href="/?page={{ current_page - 1 }}" class="btn btn-secondary">
+        back
     </a>
-    <a href="/?page={{ current_page + 1 }}" class="btn btn-primary">
-        Вперед
+    <a href="/?page={{ current_page + 1 }}" class="btn btn-secondary">
+        forward
     </a>
+</div>
 
 {% endblock %}

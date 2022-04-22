@@ -52,9 +52,9 @@ div.container6 h1 {
   margin: 0 }
 
 .floating-button:hover {
-  background: #95c5e6;
-  box-shadow: 0 15px 20px rgba(149, 197, 230, .4);
-  color: white;
+  background: #fff8e7;
+  box-shadow: 0 15px 20px rgba(80, 80, 80, .4);
+  color: black;
   transform: translateY(-7px);
 }
 .floating-button {
@@ -116,4 +116,67 @@ div.container6 h1 {
 	height: 100px;
 	position: relative;
 	background-color: rgb(51,51,204);
+}
+
+.coffee_color {
+ background-color: rgb(254, 250, 239);
+}
+
+.custom-btn {
+  width: 130px;
+  height: 40px;
+  color: rgb(254, 250, 239);
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+   box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+   7px 7px 20px 0px rgba(0,0,0,.1),
+   4px 4px 5px 0px rgba(0,0,0,.1);
+  outline: none;
+}
+.btn-16 {
+  border: none;
+  color: #000;
+  z-index: 1;
+}
+.btn-16:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 100%;
+  top: 0;
+  left: 0;
+  direction: rtl;
+  z-index: -1;
+  box-shadow:
+   -7px -7px 20px 0px #fff9,
+   -4px -4px 5px 0px #fff9,
+   7px 7px 20px 0px #0002,
+   4px 4px 5px 0px #0001;
+  transition: all 0.3s ease;
+}
+.btn-16:hover {
+  color: #000;
+}
+.btn-16:hover:after {
+  left: auto;
+  right: 0;
+  width: 100%;
+}
+.btn-16:active {
+  top: 2px;
+}
+
+.block {
+    background-color: #fff;
+    margin: 0 auto;
+    border: solid thick rgb(254, 250, 239);
+    border-radius: 1em
+    box-shadow: black 0.5em 0.5em 0.3em
 }
