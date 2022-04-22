@@ -2,14 +2,14 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="text_for_name" align="center">About us</h1>
+    <h1 class="text_for_name" align="center"> {{ title }}</h1>
     <table align="center">
         <tr class="my_row">
-            <td><img src="/static/img/Автор2.JPG" alt="Фото первого автора"></td>
-            <td><img src="/static/img/Автор1.JPG" alt="Фото второго автора"></td>
+            <td><img src='/static/img/gallery/Автор2.JPG' alt="Фото первого автора"></td>
+            <td><img src='/static/img/gallery/Автор1.JPG' alt="Фото второго автора"></td>
         </tr>
     </table>
-    <h3 align="center">Александр Пичугин и Мария Чудинова</h3>
+    <h3 align="center"> {{ names }}</h3>
 </div>
 
 {% endblock %}

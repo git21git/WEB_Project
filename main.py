@@ -21,6 +21,10 @@ login_manager.init_app(app)
 @app.route('/')
 def main_page():
     """Главная страница"""
+    with open(f'static/text/intro_1.txt', 'r', encoding='utf-8') as file:
+        intro_1 = file.read()
+    with open(f'static/text/intro_2.txt', 'r', encoding='utf-8') as file:
+        intro_2 = file.read()
     page_number = int(request.args.get('page', 1))
     if page_number < 1:
         redirect('/?page=1')
@@ -39,17 +43,27 @@ def main_page():
             Posts.is_private != True
         ).limit(limit).offset(offset)
 
-    return render_template("main_page.html", posts=posts, current_page=page_number)
+    return render_template("main_page.html",
+                           intro_1=intro_1,
+                           intro_2=intro_2,
+                           posts=posts,
+                           current_page=page_number)
 
 
 @app.route('/authors')
 def authors():
     """Страница с информацией об авторах"""
-    return render_template('authors.html')
+    title = 'About us'
+    name = 'Александр Пичугин и Мария Чудинова'
+    return render_template('authors.html',
+                           title=title,
+                           names=name)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
+    """Страница регистрации
+    Проверка по БД на существование пользователя и почты"""
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -79,30 +93,35 @@ def reqister():
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Загрузка пользователей"""
     db_sess = db_session.create_session()
     return db_sess.query(User).get(user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """страница авторизации
+    проверка по БД корректности пароля, логина"""
     form = LoginForm()
+    title = 'Авторизация'
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
+        errors = "Неправильный логин или пароль"
         return render_template('login.html',
-                               message="Неправильный логин или пароль",
+                               message=errors,
                                form=form)
     return render_template('login.html',
-                           title='Авторизация',
+                           title=title,
                            form=form)
 
 
-@app.route('/logout')
+@app.route('/log_out')
 @login_required
-def logout():
+def log_out():
     """Выход из Аккаунта и перенаправление на главную страницу"""
     logout_user()
     return redirect("/")
@@ -200,9 +219,6 @@ def add_posts():
                            form=form)
 
 
-# @app.route('/info_users', methods=['GET', 'POST'])
-# def get_info_users():
-
 @app.route('/posts/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(id):
@@ -255,7 +271,8 @@ def news_delete(id):
 @app.route('/lk', methods=['GET'])  # Личный кабинет
 @login_required
 def lk():
-    """Страница личного кабинета"""
+    """Страница личного кабинета
+        пользователь может редактировать информацию о себе"""
     form = EditProfileForm()
     db_sess = db_session.create_session()
 
@@ -280,6 +297,7 @@ def lk():
 @app.route('/edit_profile', methods=['POST'])
 @login_required
 def edit_profile():
+    """"""
     form = EditProfileForm()
 
     if form.validate_on_submit():
@@ -300,66 +318,25 @@ def edit_profile():
         abort(400)
 
 
-@app.route('/load_photo', methods=['POST', 'GET'])
-def load_photo():
-    file = url_for('static', filename='img/photo.jpg')
-    print(12)
+@app.route('/gallery', methods=['POST', 'GET'])
+def gallery():
+    """Страница с фото-новостями
+        Пользователь может загружать новые новости
+        Вывод осуществляется при помощи bootstrap(карусель)"""
+    title = 'Фото'
+    intro_title = 'Фото-Новости'
+    pictures = os.listdir('static/img')
     if request.method == 'GET':
-        return f'''<!doctype html>
-                        <html lang="en">
-                          <head>
-                            <meta charset="utf-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-                            <link rel="stylesheet" type="text/css" href="{url_for('static', filename='css/style.css')}" />
-                            <title>Отбор </title>
-                          </head>
-                          <body>
-                            <h1 align="center">Загрузка фотографии</h1>
-                            <h3 align="center">для участия в миссии</h3>
-                            <div>
-                                <form class="login_form" method="post" enctype="multipart/form-data">
-                                   <div class="form-group">
-                                        <label for="photo">Приложите фотографию</label>
-                                        <input type="file" class="form-control-file" id="photo" name="file">
-                                    </div>
-                                    <img src="{file}" alt="Фото">
-                                    <br>
-                                    <button type="submit" class="btn btn-primary">Отправить</button>
-                                </form>
-                            </div>
-                          </body>
-                        </html>'''
+        return render_template('gallery.html',
+                               pictures=pictures,
+                               title=title,
+                               lnp=len(pictures),
+                               intro=intro_title)
     elif request.method == 'POST':
         f = request.files['file']
-        with open(f'static/img/{f.filename}', 'wb') as file:
+        with open(f'static/img/3.jpg', 'wb') as file:
             file.write(f.read())
-        file = url_for('static', filename=f'img/{f.filename}')
-        return f'''<!doctype html>
-                        <html lang="en">
-                          <head>
-                            <meta charset="utf-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-                            <link rel="stylesheet" type="text/css" href="{url_for('static', filename='css/style.css')}" />
-                            <title>Отбор </title>
-                          </head>
-                          <body>
-                            <h1 align="center">Загрузка фотографии</h1>
-                            <h3 align="center">для участия в миссии</h3>
-                            <div>
-                                <form class="login_form" method="post" enctype="multipart/form-data">
-                                   <div class="form-group">
-                                        <label for="photo">Приложите фотографию</label>
-                                        <input type="file" class="form-control-file" id="photo" name="file">
-                                    </div>
-                                    <img src="{file}" alt="Фото">
-                                    <br>
-                                    <button type="submit" class="btn btn-primary">Отправить</button>
-                                </form>
-                            </div>
-                          </body>
-                        </html>'''
+        return redirect('/gallery')
 
 
 if __name__ == '__main__':
