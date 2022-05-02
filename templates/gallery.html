@@ -19,16 +19,7 @@
 </head>
 <body>
 <div class="container">
-    <div>
-            <form class="login_form" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="photo">Приложите фотографию</label>
-                    <input type="file" class="form-control-file" id="photo" name="file">
-                </div>
-                <br>
-            </form>
 
-        </div>
     <h1 align="center">{{ into }}</h1>
     <div align="center" id="carousel-example-generic" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -57,7 +48,17 @@
         </a>
 
     </div>
-    <button type="submit" class="btn btn-primary">Отправить</button>
+    <div>
+        <form class="login_form" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="photo">Приложите фотографию</label>
+                <input type="file" class="form-control-file" id="photo" name="file">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+
 </div>
 </body>
 {% endblock %}
