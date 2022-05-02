@@ -9,6 +9,7 @@ from .db_session import SqlAlchemyBase
 
 
 class User(SqlAlchemyBase, UserMixin):
+    """Класс Пользователя"""
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
@@ -23,7 +24,9 @@ class User(SqlAlchemyBase, UserMixin):
     posts = orm.relation("Posts", back_populates='user')
 
     def set_password(self, password):
+        """Функция хеширования пароля"""
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
+        """Функция проверки пароля"""
         return check_password_hash(self.hashed_password, password)

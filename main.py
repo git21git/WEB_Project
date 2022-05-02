@@ -422,60 +422,6 @@ def gallery():
         return redirect('/gallery')
 
 
-@app.route('/about_pg', methods=['POST', 'GET'])
-def about_pg():
-    """Страница с основной информацией о проекте
-    Не только для авторизованных пользователей"""
-    return f"""<!doctype html>
-                <html lang="en">
-                
-                <head>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                    <link rel="stylesheet"
-                          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-                          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-                          crossorigin="anonymous">
-                    <link rel="stylesheet" type="text/css" href="static/css/styles.css">
-                    <title>About_pg</title>
-                </head>
-                
-                <body>
-                <header>
-                    <nav class="navbar navbar-light bg-light">
-                        <h1>
-                            <a class="text_for_name title_link" href="/">
-                                The Remarques
-                            </a>
-                        </h1>
-                            <p>
-                                <a class="floating-button" href="/country/map/Россия">Country</a>
-                                <a class="floating-button" href="/ground/map/Москва">City</a>
-                                <a class="floating-button" href="/authors">Authors</a>
-                                <a class="floating-button" href="/register">Sign up</a>
-                                <a class="floating-button" href="/login">Sign in</a>
-                            </p>
-                    </nav>
-                </header>
-                            <h4>
-                            Думая над темой для проекта мы решили создать 
-                                мини ленту публикаций от пользователей
-                        
-                            <p>Цель: Разработать сайт на flask</p>
-                        
-                            <p>Задачи: </p>
-                            <p>1. Изучить организацию подобных приложений.</p>
-                            <p>2. Спроектировать пользовательский интерфейс.</p>
-                            <p>3. Реализовать Взаимодействие с API и ORM моделями</p>
-                            <p>4. Оформить проект.</p>
-                        
-                            </h4>
-                <footer class="bg-light navbar-light">
-                    <p align="center"><a class="floating-button" href="#">Back to top</a></p>
-                </footer>
-            """
-
-
 if __name__ == '__main__':
     """Подключаемся к БД"""
     db_session.global_init("db/posts.db")
